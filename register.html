@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Daftar — Cinemates</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+    <div class="app">
+
+        <div class="topbar">
+            <a href="index.html" class="logo"><span class="dot"></span>CINEMATES</a>
+            <div class="demo-nav">
+                <a href="login.html">Login</a>
+                <a href="register.html" class="active">Daftar</a>
+            </div>
+        </div>
+
+        <main>
+            <section class="auth-wrap">
+                <div class="auth-card">
+                    <span class="auth-eyebrow">01 — Registrasi</span>
+                    <h1 class="auth-title">Buat Akun Cinemates</h1>
+                    <p class="auth-sub">Kami akan kirim kode verifikasi ke emailmu sebelum kamu bisa gabung room.</p>
+
+                    <!-- FORM 1: INPUT DATA REGISTRASI -->
+                    <form id="registerForm" class="panel">
+                        <div class="field">
+                            <label for="re-name">Nama Pengguna</label>
+                            <input id="re-name" name="username" type="text" placeholder="sephiaase" required>
+                        </div>
+                        <div class="field">
+                            <label for="re-email">Email</label>
+                            <input id="re-email" name="email" type="email" placeholder="kamu@email.com" required>
+                        </div>
+                        <div class="field">
+                            <label for="re-pass">Kata Sandi</label>
+                            <input id="re-pass" name="password" type="password" placeholder="Minimal 8 karakter" required>
+                            <div class="help">Dienkripsi di server sebelum disimpan ke database.</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Kirim Kode Verifikasi</button>
+                    </form>
+
+                    <!-- FORM 2: VERIFIKASI OTP (Awalnya disembunyikan dengan display:none) -->
+                    <form id="otpForm" class="panel" style="margin-top:20px; display: none;">
+                        <label style="display:block; font-weight:700; font-size:13px; text-transform:uppercase; margin-bottom:12px;">
+                            Masukkan Kode OTP <span class="badge badge-new" style="margin-left:6px;">SMTP</span>
+                        </label>
+                        <div class="otp-row">
+                            <!-- Tambahkan class otp-input agar mudah diambil nilainya via JS -->
+                            <input class="otp-input" maxlength="1" inputmode="numeric" required>
+                            <input class="otp-input" maxlength="1" inputmode="numeric" required>
+                            <input class="otp-input" maxlength="1" inputmode="numeric" required>
+                            <input class="otp-input" maxlength="1" inputmode="numeric" required>
+                            <input class="otp-input" maxlength="1" inputmode="numeric" required>
+                            <input class="otp-input" maxlength="1" inputmode="numeric" required>
+                        </div>
+                        <div id="otpHelp" class="help" style="margin-bottom:16px;">Kode dikirim ke emailmu, berlaku 10 menit.</div>
+                        <button type="submit" class="btn btn-yellow btn-block">Verifikasi Email</button>
+                    </form>
+
+                    <div class="auth-switch">
+                        Sudah punya akun? <a href="login.html">Masuk</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+    </div>
+
+    <script src="assets/js/auth.js"></script>
+</body>
+
+</html>

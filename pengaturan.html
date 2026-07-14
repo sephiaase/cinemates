@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pengaturan — Cinemates</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- BUG FIX (3.1): pastikan sesi valid sebelum halaman pengaturan dirender -->
+    <script src="assets/js/auth-guard.js"></script>
+</head>
+
+<body>
+    <div class="app">
+
+        <!-- ===== TOPBAR ===== -->
+        <header class="topbar">
+            <a href="dashboard.html" class="logo"><span class="dot"></span> CINEMATES</a>
+            <nav class="demo-nav">
+                <a href="dashboard.html">DASHBOARD</a>
+                <a href="room.html">WATCH ROOM</a>
+            </nav>
+        </header>
+
+        <div class="dash-shell">
+
+            <!-- ===== SIDEBAR ===== -->
+            <aside class="sidebar">
+                <div class="user-chip">
+                    <div class="avatar" id="user-avatar">SP</div>
+                    <div>
+                        <div class="name" id="user-name">Loading...</div>
+                        <div class="status">● Verified</div>
+                    </div>
+                </div>
+                <nav>
+                    <a href="dashboard.html">☐ Dashboard</a>
+                    <a href="riwayat-nonton.html">◷ Riwayat Nonton</a>
+                    <a href="pengaturan.html" class="active">⚙ Pengaturan</a>
+                    <a href="login.html">↪ Keluar</a>
+                </nav>
+            </aside>
+
+            <!-- ===== MAIN ===== -->
+            <main class="dash-main" style="max-width:1200px;">
+
+                <div class="dash-head">
+                    <div>
+                        <h1>PENGATURAN</h1>
+                        <p>Kelola akun, preferensi nonton, dan notifikasi kamu.</p>
+                    </div>
+                </div>
+
+                <div class="settings-layout">
+
+                    <!-- ===== SIDE TABS ===== -->
+                    <nav class="settings-tabs">
+                        <a href="#profil" class="tab-link active" data-tab="profil">👤 Profil</a>
+                        <a href="#akun" class="tab-link" data-tab="akun">🔒 Akun &amp; Keamanan</a>
+                        <a href="#pemutaran" class="tab-link" data-tab="pemutaran">▶ Pemutaran</a>
+                        <a href="#notifikasi" class="tab-link" data-tab="notifikasi">🔔 Notifikasi</a>
+                        <a href="#bahaya" class="tab-link" data-tab="bahaya">⚠ Zona Bahaya</a>
+                    </nav>
+
+                    <!-- ===== CONTENT ===== -->
+                    <div class="settings-content">
+
+                        <!-- PROFIL -->
+                        <section class="settings-section panel tab-panel" id="profil">
+                            <div class="panel-head">
+                                <div>
+                                    <h2>Profil</h2>
+                                    <div class="sub">Informasi ini akan terlihat oleh anggota room lain.</div>
+                                </div>
+                                <span class="badge badge-new">VERIFIED</span>
+                            </div>
+
+                            <div class="profile-row">
+                                <div class="avatar-lg" id="user-avatar">CM</div>
+                                <div>
+                                    <button class="btn btn-secondary btn-sm">GANTI FOTO</button>
+                                    <div class="help" style="margin-top:8px;">JPG atau PNG, maks 2MB.</div>
+                                </div>
+                            </div>
+
+                            <div class="field-row">
+                                <div class="field">
+                                    <label>Nama Tampilan</label>
+                                    <input type="text" id="field-display-name" value="">
+                                </div>
+                                <div class="field">
+                                    <label>Username</label>
+                                    <input type="text" id="field-username" value="">
+                                </div>
+                            </div>
+
+                            <div class="field">
+                                <label>Bio</label>
+                                <input type="text" value="Nonton bareng tiap malam Sabtu 🎬">
+                            </div>
+
+                            <div class="field">
+                                <label>Zona Waktu</label>
+                                <input type="text" value="GMT+7 — Jakarta / Bogor">
+                            </div>
+
+                            <div class="save-bar">
+                                <button class="btn btn-outline">BATAL</button>
+                                <button class="btn btn-primary">SIMPAN PERUBAHAN</button>
+                            </div>
+                        </section>
+
+                        <!-- AKUN & KEAMANAN -->
+                        <section class="settings-section panel tab-panel" id="akun" style="display:none;">
+                            <div class="panel-head">
+                                <div>
+                                    <h2>Akun &amp; Keamanan</h2>
+                                    <div class="sub">Kelola email, kata sandi, dan sesi login kamu.</div>
+                                </div>
+                            </div>
+
+                            <div class="field-row">
+                                <div class="field">
+                                    <label>Email</label>
+                                    <input type="email" id="field-email" value="">
+                                </div>
+                                <div class="field">
+                                    <label>Nomor Telepon</label>
+                                    <input type="text" value="+62 812-xxxx-xxxx">
+                                </div>
+                            </div>
+
+                            <div class="field-row">
+                                <div class="field">
+                                    <label>Kata Sandi Baru</label>
+                                    <input type="password" placeholder="••••••••">
+                                </div>
+                                <div class="field">
+                                    <label>Konfirmasi Kata Sandi</label>
+                                    <input type="password" placeholder="••••••••">
+                                </div>
+                            </div>
+
+                            <div class="option-row">
+                                <div class="otxt">
+                                    <strong>Autentikasi Dua Faktor (2FA)</strong>
+                                    <span>Tambahan lapisan keamanan setiap kali login.</span>
+                                </div>
+                                <label class="toggle">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+                            </div>
+
+                            <div class="option-row">
+                                <div class="otxt">
+                                    <strong>Keluar dari Semua Perangkat</strong>
+                                    <span>3 perangkat sedang login saat ini.</span>
+                                </div>
+                                <button class="btn btn-outline btn-sm">KELUAR SEMUA</button>
+                            </div>
+
+                            <div class="save-bar">
+                                <button class="btn btn-outline">BATAL</button>
+                                <button class="btn btn-primary">SIMPAN PERUBAHAN</button>
+                            </div>
+                        </section>
+
+                        <!-- PEMUTARAN -->
+                        <section class="settings-section panel tab-panel" id="pemutaran" style="display:none;">
+                            <div class="panel-head">
+                                <div>
+                                    <h2>Pemutaran</h2>
+                                    <div class="sub">Atur pengalaman nonton bareng di dalam room.</div>
+                                </div>
+                            </div>
+
+                            <div class="field" style="margin-bottom:22px;">
+                                <label>Kualitas Video Default</label>
+                                <div class="radio-card-group">
+                                    <label class="radio-card selected"><input type="radio" name="quality" checked> AUTO</label>
+                                    <label class="radio-card"><input type="radio" name="quality"> 1080P</label>
+                                    <label class="radio-card"><input type="radio" name="quality"> 720P</label>
+                                    <label class="radio-card"><input type="radio" name="quality"> HEMAT DATA</label>
+                                </div>
+                            </div>
+
+                            <div class="option-row">
+                                <div class="otxt">
+                                    <strong>Sinkronisasi Otomatis (UDP Sync)</strong>
+                                    <span>Putar video mengikuti host secara real-time.</span>
+                                </div>
+                                <label class="toggle">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+                            </div>
+
+                            <div class="option-row">
+                                <div class="otxt">
+                                    <strong>Autoplay Episode Berikutnya</strong>
+                                    <span>Lanjut otomatis ke video selanjutnya di room.</span>
+                                </div>
+                                <label class="toggle">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+                            </div>
+
+                            <div class="option-row">
+                                <div class="otxt">
+                                    <strong>Putar Otomatis Saat Room Dimulai</strong>
+                                    <span>Video langsung diputar saat host menekan mulai.</span>
+                                </div>
+                                <label class="toggle">
+                <input type="checkbox">
+                <span class="slider"></span>
+              </label>
+                            </div>
+
+                            <div class="option-row">
+                                <div class="otxt">
+                                    <strong>Simpan Riwayat Progres Nonton</strong>
+                                    <span>Izinkan Cinemates mengingat posisi tontonan kamu.</span>
+                                </div>
+                                <label class="toggle">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+                            </div>
+
+                            <div class="save-bar">
+                                <button class="btn btn-outline">BATAL</button>
+                                <button class="btn btn-primary">SIMPAN PERUBAHAN</button>
+                            </div>
+                        </section>
+
+                        <!-- NOTIFIKASI -->
+                        <section class="settings-section panel tab-panel" id="notifikasi" style="display:none;">
+                            <div class="panel-head">
+                                <div>
+                                    <h2>Notifikasi</h2>
+                                    <div class="sub">Pilih notifikasi apa saja yang ingin kamu terima.</div>
+                                </div>
+                            </div>
+
+                            <div class="option-row">
+                                <div class="otxt">
+                                    <strong>Undangan Room Baru</strong>
+                                    <span>Saat seseorang mengundangmu ke room mereka.</span>
+                                </div>
+                                <label class="toggle">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+                            </div>
+
+                            <div class="option-row">
+                                <div class="otxt">
+                                    <strong>Room Akan Dimulai</strong>
+                                    <span>Pengingat 10 menit sebelum room live dimulai.</span>
+                                </div>
+                                <label class="toggle">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+                            </div>
+
+                            <div class="option-row">
+                                <div class="otxt">
+                                    <strong>Pesan Chat Room</strong>
+                                    <span>Notifikasi saat ada pesan baru di dalam room.</span>
+                                </div>
+                                <label class="toggle">
+                <input type="checkbox">
+                <span class="slider"></span>
+              </label>
+                            </div>
+
+                            <div class="option-row">
+                                <div class="otxt">
+                                    <strong>Email Ringkasan Mingguan</strong>
+                                    <span>Rekap aktivitas nonton kamu setiap minggu.</span>
+                                </div>
+                                <label class="toggle">
+                <input type="checkbox" checked>
+                <span class="slider"></span>
+              </label>
+                            </div>
+
+                            <div class="option-row">
+                                <div class="otxt">
+                                    <strong>Promo &amp; Pembaruan Fitur</strong>
+                                    <span>Info fitur baru dan penawaran dari Cinemates.</span>
+                                </div>
+                                <label class="toggle">
+                <input type="checkbox">
+                <span class="slider"></span>
+              </label>
+                            </div>
+
+                            <div class="save-bar">
+                                <button class="btn btn-outline">BATAL</button>
+                                <button class="btn btn-primary">SIMPAN PERUBAHAN</button>
+                            </div>
+                        </section>
+
+                        <!-- ZONA BAHAYA -->
+                        <section class="settings-section panel danger-zone tab-panel" id="bahaya" style="display:none;">
+                            <div class="panel-head">
+                                <div>
+                                    <h2>Zona Bahaya</h2>
+                                    <div class="sub">Tindakan berikut bersifat permanen dan tidak bisa dibatalkan.</div>
+                                </div>
+                            </div>
+
+                            <div class="danger-row">
+                                <div class="otxt">
+                                    <strong>Nonaktifkan Sementara Akun</strong>
+                                    <span>Sembunyikan profil kamu sampai diaktifkan kembali.</span>
+                                </div>
+                                <button class="btn btn-secondary btn-sm">NONAKTIFKAN</button>
+                            </div>
+
+                            <div class="danger-row">
+                                <div class="otxt">
+                                    <strong>Hapus Akun Permanen</strong>
+                                    <span>Semua room, riwayat, dan data kamu akan dihapus selamanya.</span>
+                                </div>
+                                <button class="btn btn-danger btn-sm" onclick="openModal()">HAPUS AKUN</button>
+                            </div>
+                        </section>
+
+                    </div>
+                </div>
+
+            </main>
+        </div>
+
+    </div>
+
+    <!-- ===== MODAL KONFIRMASI HAPUS AKUN ===== -->
+    <div class="modal-overlay" id="deleteModal">
+        <div class="modal-box">
+            <h3>Hapus Akun Permanen?</h3>
+            <p>Tindakan ini tidak bisa dibatalkan. Semua room, riwayat nonton, dan data profil kamu akan dihapus selamanya dari Cinemates.</p>
+            <div class="modal-actions">
+                <button class="btn btn-outline" onclick="closeModal()">BATAL</button>
+                <button class="btn btn-danger" onclick="closeModal()">YA, HAPUS AKUN SAYA</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // BUG FIX (4): sidebar & form profil sebelumnya menampilkan "sephiaase"
+        // yang di-hardcode di HTML, bukan username user yang benar-benar login.
+        // Sekarang diisi dari data currentUser di localStorage, sama seperti
+        // pola yang sudah dipakai di dashboard.js.
+        (function populateUserInfo() {
+            const userData = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            const nameEl = document.getElementById('user-name');
+            const avatarEl = document.getElementById('user-avatar');
+            const displayNameField = document.getElementById('field-display-name');
+            const usernameField = document.getElementById('field-username');
+            const emailField = document.getElementById('field-email');
+
+            if (userData) {
+                if (nameEl) nameEl.textContent = userData.username;
+                if (avatarEl) avatarEl.textContent = userData.username.substring(0, 2).toUpperCase();
+                if (displayNameField) displayNameField.value = userData.username;
+                if (usernameField) usernameField.value = userData.username;
+                if (emailField) emailField.value = userData.email || '';
+            } else {
+                if (nameEl) nameEl.textContent = 'Guest';
+            }
+        })();
+
+        // tab switching
+        document.querySelectorAll('.tab-link').forEach(link => {
+            link.addEventListener('click', function(e) {
+                e.preventDefault();
+                document.querySelectorAll('.tab-link').forEach(l => l.classList.remove('active'));
+                document.querySelectorAll('.tab-panel').forEach(p => p.style.display = 'none');
+                this.classList.add('active');
+                document.getElementById(this.dataset.tab).style.display = 'block';
+            });
+        });
+
+        // radio card visual selection
+        document.querySelectorAll('.radio-card input').forEach(radio => {
+            radio.addEventListener('change', function() {
+                document.querySelectorAll('.radio-card').forEach(c => c.classList.remove('selected'));
+                this.closest('.radio-card').classList.add('selected');
+            });
+        });
+
+        // delete account modal
+        function openModal() {
+            document.getElementById('deleteModal').classList.add('open');
+        }
+
+        function closeModal() {
+            document.getElementById('deleteModal').classList.remove('open');
+        }
+        document.getElementById('deleteModal').addEventListener('click', function(e) {
+            if (e.target === this) closeModal();
+        });
+    </script>
+</body>
+
+</html>

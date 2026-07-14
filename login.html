@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Masuk — Cinemates</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+</head>
+
+<body>
+    <div class="app">
+
+        <div class="topbar">
+            <a href="index.html" class="logo"><span class="dot"></span>CINEMATES</a>
+            <div class="demo-nav">
+                <a href="login.html" class="active">Login</a>
+                <a href="register.html">Daftar</a>
+            </div>
+        </div>
+
+        <main>
+            <section class="auth-wrap">
+                <div class="auth-card">
+                    <span class="auth-eyebrow">Watch Party, Synced</span>
+                    <h1 class="auth-title">Masuk ke<br>Room-mu</h1>
+                    <p class="auth-sub">Optimalisasi pemutaran video bersama secara real-time memanfaatkan kecepatan transmisi protokol UDP.</p>
+
+                    <form class="panel">
+                        <div class="field">
+                            <label for="li-email">Email</label>
+                            <input id="li-email" name="email" type="email" placeholder="cinemates@mail.com" required>
+                        </div>
+                        <div class="field">
+                            <label for="li-pass">Kata Sandi</label>
+                            <input id="li-pass" name="password" type="password" placeholder="password123" required>
+                            <div class="error-msg">Kata sandi minimal 8 karakter dan belum cocok dengan akun.</div>
+                        </div>
+                        <button type="submit" class="btn btn-primary btn-block">Masuk</button>
+                        <div class="divider">
+                            <hr><span>atau</span>
+                            <hr>
+                        </div>
+                        <button type="button" class="btn btn-outline btn-block">Lupa kata sandi?</button>
+                    </form>
+
+                    <div class="auth-switch">
+                        Belum punya akun? <a href="register.html">Daftar sekarang</a>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+    </div>
+</body>
+
+<script>
+    // Memilih form berdasarkan class 'panel' dari source 1
+    document.querySelector('.panel').addEventListener('submit', async(e) => {
+        e.preventDefault(); // Mencegah reload halaman secara default
+
+        // Mengambil nilai dari input berdasarkan ID di source 1[cite: 1]
+        const email = document.getElementById('li-email').value;
+        const password = document.getElementById('li-pass').value;
+
+        try {
+            // Melakukan request login ke server
+            const response = await fetch('/api/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    email,
+                    password
+                })
+            });
+
+            const data = await response.json();
+
+            if (response.ok) {
+                alert('Login Berhasil!');
+                localStorage.setItem('currentUser', JSON.stringify(data.user));
+
+                // Mengarahkan user ke dashboard setelah sukses
+                window.location.href = '/dashboard.html';
+            } else {
+                alert(data.error || 'Login gagal.');
+            }
+        } catch (err) {
+            console.error(err);
+            alert('Terjadi kesalahan koneksi ke server.');
+        }
+    });
+</script>
+
+</html>

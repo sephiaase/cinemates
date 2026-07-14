@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Riwayat Nonton — Cinemates</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- BUG FIX (3.1): pastikan sesi valid sebelum riwayat nonton dirender -->
+    <script src="assets/js/auth-guard.js"></script>
+</head>
+
+<body>
+    <div class="app">
+
+        <!-- ===== TOPBAR ===== -->
+        <header class="topbar">
+            <a href="dashboard.html" class="logo"><span class="dot"></span> CINEMATES</a>
+            <nav class="demo-nav">
+                <a href="dashboard.html">DASHBOARD</a>
+                <a href="room.html">WATCH ROOM</a>
+            </nav>
+        </header>
+
+        <div class="dash-shell">
+
+            <!-- ===== SIDEBAR ===== -->
+            <aside class="sidebar">
+                <div class="user-chip">
+                    <div class="avatar" id="user-avatar">CM</div>
+                    <div>
+                        <div class="name" id="user-name">Memuat...</div>
+                        <div class="status">● Verified</div>
+                    </div>
+                </div>
+                <nav>
+                    <a href="dashboard.html">☐ Dashboard</a>
+                    <a href="riwayat-nonton.html" class="active">◷ Riwayat Nonton</a>
+                    <a href="pengaturan.html">⚙ Pengaturan</a>
+                    <a href="login.html">↪ Keluar</a>
+                </nav>
+            </aside>
+
+            <!-- ===== MAIN ===== -->
+            <main class="dash-main">
+
+                <div class="dash-head">
+                    <div>
+                        <h1>RIWAYAT NONTON</h1>
+                        <p>Semua room yang pernah kamu ikuti, lengkap dengan progres tontonan.</p>
+                    </div>
+                    <button class="btn btn-outline btn-sm" onclick="exportHistory()">⬇ EKSPOR CSV</button>
+                </div>
+
+                <!-- Stats (Dihitung Dinamis dari MySQL) -->
+                <div class="history-stats">
+                    <div class="stat-box teal">
+                        <div class="num" id="stat-total">0</div>
+                        <div class="lbl">Total Room Ditonton</div>
+                    </div>
+                    <div class="stat-box magenta">
+                        <div class="num" id="stat-done">0</div>
+                        <div class="lbl">Selesai Ditonton</div>
+                    </div>
+                    <div class="stat-box yellow">
+                        <div class="num" id="stat-partial">0</div>
+                        <div class="lbl">Room Belum Selesai</div>
+                    </div>
+                </div>
+
+                <!-- Filter -->
+                <div class="filter-bar">
+                    <div class="search-wrap">
+                        <input type="text" id="searchInput" placeholder="Cari judul room atau host..." oninput="filterHistory()">
+                    </div>
+                    <select id="statusFilter" onchange="filterHistory()">
+                        <option value="all">Semua Status</option>
+                        <option value="done">Selesai</option>
+                        <option value="partial">Berhenti di Tengah</option>
+                    </select>
+                    <select id="sortFilter" onchange="filterHistory()">
+                        <option value="recent">Terbaru</option>
+                        <option value="oldest">Terlama</option>
+                    </select>
+                </div>
+
+                <!-- ===== LIST UTAMA DATA MYSQL ===== -->
+                <div class="history-list" id="historyList">
+                    <!-- Data dari MySQL akan dirender di sini via JavaScript Fetch -->
+                </div>
+
+                <!-- Empty state -->
+                <div class="empty-state" id="emptyState" style="display:none; margin-top:14px;">
+                    <h3 style="font-size:20px; margin-bottom:8px;">TIDAK ADA HASIL</h3>
+                    <p style="color:#555; margin-bottom:18px;">Coba ubah kata kunci pencarian atau filter status.</p>
+                    <button class="btn btn-primary" onclick="resetFilter()">RESET FILTER</button>
+                </div>
+
+            </main>
+        </div>
+
+    </div>
+
+    <script>
+        let rawHistoryData = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // BUG FIX (4): sidebar sebelumnya menampilkan "sephiaase" yang di-hardcode
+            // di HTML, bukan username user yang benar-benar login. Sekarang diisi
+            // dari data currentUser di localStorage, sama seperti di dashboard.js.
+            const userData = JSON.parse(localStorage.getItem('currentUser') || 'null');
+            const nameEl = document.getElementById('user-name');
+            const avatarEl = document.getElementById('user-avatar');
+            if (userData) {
+                if (nameEl) nameEl.textContent = userData.username;
+                if (avatarEl) avatarEl.textContent = userData.username.substring(0, 2).toUpperCase();
+            } else {
+                if (nameEl) nameEl.textContent = 'Guest';
+            }
+
+            loadWatchHistory();
+        });
+
+        async function loadWatchHistory() {
+            const container = document.getElementById('historyList');
+            if (!container) return;
+
+            container.innerHTML = '<div style="text-align:center; padding:30px; font-weight:700;">Memuat riwayat dari MySQL...</div>';
+
+            try {
+                const userData = JSON.parse(localStorage.getItem('currentUser'));
+                const username = userData ? userData.username : 'sephiaase';
+
+                const response = await fetch(`/api/riwayat?username=${username}`);
+                rawHistoryData = await response.json();
+
+                if (!response.ok) throw new Error(rawHistoryData.error);
+
+                // Update Dashboard Mini Stats secara dinamis
+                document.getElementById('stat-total').textContent = rawHistoryData.length;
+                document.getElementById('stat-done').textContent = rawHistoryData.filter(i => i.status === 'done').length;
+                document.getElementById('stat-partial').textContent = rawHistoryData.filter(i => i.status === 'partial').length;
+
+                renderHistoryList(rawHistoryData);
+
+            } catch (err) {
+                console.error('Error fetching history:', err);
+                container.innerHTML = `<div style="color:red; text-align:center; padding:20px;">❌ Gagal memuat data: ${err.message}</div>`;
+            }
+        }
+
+        function renderHistoryList(items) {
+            const container = document.getElementById('historyList'); //
+            if (items.length === 0) { //[cite: 13]
+                container.innerHTML = ''; //[cite: 13]
+                document.getElementById('emptyState').style.display = 'block'; //[cite: 13]
+                return; //[cite: 13]
+            }
+
+            document.getElementById('emptyState').style.display = 'none'; //[cite: 13]
+
+            container.innerHTML = items.map(item => { //[cite: 13]
+                // Pilih warna tema thumb berdasarkan kategori/genre
+                let thumbClass = ''; //[cite: 13]
+                if (item.genre === 'anime') thumbClass = 'thumb-yellow'; //[cite: 13]
+                else if (item.genre === 'studi') thumbClass = 'thumb-magenta'; //[cite: 13]
+
+                // Format Tanggal MySQL menjadi string lokal yang rapi
+                const formattedDate = new Date(item.watched_at).toLocaleDateString('id-ID', { //[cite: 13]
+                    day: 'numeric',
+                    month: 'short',
+                    year: 'numeric',
+                    hour: '2-digit',
+                    minute: '2-digit'
+                });
+
+                const isDone = item.status === 'done';
+
+                // Logika Pengecekan Status Room Aktif / Berakhir
+                const isRoomActive = item.active_room_id !== null && item.room_id !== 0;
+
+                let buttonHTML = '';
+                if (isRoomActive) {
+                    // Jika room masih aktif, tombol mengarah ke halaman room dengan query param ID
+                    buttonHTML = `
+                <button class="btn ${isDone ? 'btn-outline' : 'btn-primary'} btn-sm" onclick="window.location.href='room.html?id=${item.room_id}'">
+                    ${isDone ? 'TONTON ULANG' : 'LANJUT NONTON'}
+                </button>
+            `;
+                } else {
+                    // Jika room sudah berakhir, tombol di-disable dan diberi style abu-abu Neo-Brutalist
+                    buttonHTML = `
+                <button class="btn btn-sm" disabled style="background: #ccc; color: #666; cursor: not-allowed; box-shadow: none; transform: none;">
+                    Sesi Room Berakhir
+                </button>
+            `;
+                }
+
+                return `
+            <div class="history-item" data-title="${item.video_title.toLowerCase()}" data-status="${item.status}">
+                <div class="history-thumb ${thumbClass}">▶</div>
+                <div class="history-body">
+                    <h3>${item.video_title}</h3>
+                    <div class="history-meta">
+                        <span>👤 Host: ${item.username}</span>
+                        <span>Room: <strong>${item.room_name}</strong></span>
+                        <span>Ditonton: ${formattedDate}</span>
+                    </div>
+                    <div class="history-progress">
+                        <div class="fill" style="width: ${isDone ? '100%' : '62%'}"></div>
+                    </div>
+                </div>
+                <div class="history-actions">
+                    <span class="badge ${isDone ? 'status-done' : 'status-partial'}">
+                        ${isDone ? 'SELESAI' : 'BERHENTI DI TENGAH'}
+                    </span>
+                    ${buttonHTML}
+                </div>
+            </div>
+        `;
+            }).join(''); //[cite: 13]
+        }
+
+        function filterHistory() {
+            const q = document.getElementById('searchInput').value.toLowerCase().trim();
+            const status = document.getElementById('statusFilter').value;
+            const sortBy = document.getElementById('sortFilter').value;
+
+            // 1. Filter Pencarian Teks & Status
+            let filtered = rawHistoryData.filter(item => {
+                const matchesSearch = item.video_title.toLowerCase().includes(q) || item.room_name.toLowerCase().includes(q);
+                const matchesStatus = status === 'all' || item.status === status;
+                return matchesSearch && matchesStatus;
+            });
+
+            // 2. Sortir Berdasarkan Waktu
+            if (sortBy === 'oldest') {
+                filtered.sort((a, b) => new Date(a.watched_at) - new Date(b.watched_at));
+            } else {
+                filtered.sort((a, b) => new Date(b.watched_at) - new Date(a.watched_at));
+            }
+
+            renderHistoryList(filtered);
+        }
+
+        function resetFilter() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('statusFilter').value = 'all';
+            document.getElementById('sortFilter').value = 'recent';
+            renderHistoryList(rawHistoryData);
+        }
+
+        function exportHistory() {
+            alert('Riwayat nonton kamu dari database MySQL akan diekspor sebagai file CSV.');
+        }
+    </script>
+</body>
+
+</html>

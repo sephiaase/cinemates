@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard — Cinemates</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+    <!-- BUG FIX (3.1): pastikan sesi valid sebelum halaman dashboard dirender -->
+    <script src="assets/js/auth-guard.js"></script>
+</head>
+
+<body>
+    <div class="app">
+
+        <div class="topbar">
+            <a href="dashboard.html" class="logo"><span class="dot"></span>CINEMATES</a>
+            <div class="demo-nav">
+                <a href="dashboard.html" class="active">Dashboard</a>
+                <a href="room.html">Watch Room</a>
+            </div>
+        </div>
+
+        <main>
+            <div class="dash-shell">
+                <aside class="sidebar">
+                    <div class="user-chip">
+                        <div class="avatar" id="user-avatar">CM</div>
+                        <div>
+                            <div class="name" id="user-name">Memuat...</div>
+                            <!-- ID ini akan diisi JS -->
+                            <div class="status">● Verified</div>
+                        </div>
+                    </div>
+                    <nav>
+                        <a href="dashboard.html" class="active">▣ Dashboard</a>
+                        <a href="riwayat-nonton.html">◷ Riwayat Nonton</a>
+                        <a href="pengaturan.html">⚙ Pengaturan</a>
+                        <a href="login.html">↪ Keluar</a>
+                    </nav>
+                </aside>
+
+                <div class="dash-main">
+                    <div class="dash-head">
+                        <div>
+                            <h1>Room Kamu</h1>
+                            <p>Memuat status kamar...</p>
+                        </div>
+                        <button class="btn btn-primary" data-open-modal="modal-create-room">+ Buat Room Baru</button>
+                    </div>
+
+                    <!-- Grid utama dibersihkan, diisi via database secara dinamis -->
+                    <div class="room-grid">
+                        <div style="text-align:center; padding:40px; font-weight:700; grid-column: 1/-1;">Memuat data room aktif dari MySQL...</div>
+                    </div>
+
+                    <h2 style="font-size:20px; margin-bottom:14px; margin-top: 30px;">Undangan Tertunda</h2>
+                    <div class="empty-state">
+                        <div style="font-size:15px; font-weight:700; margin-bottom:6px;">Belum ada undangan</div>
+                        <p style="font-size:13px; color:#666; margin:0 0 16px;">Room yang mengundangmu akan muncul di sini.</p>
+                        <button class="btn btn-outline btn-sm" data-open-modal="modal-browse-rooms">Jelajahi Room Publik</button>
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <!-- ===== MODAL: Buat Room Baru ===== -->
+        <div class="modal-overlay" id="modal-create-room">
+            <div class="modal-box">
+                <button class="modal-x" type="button" data-close-modal aria-label="Tutup">✕</button>
+                <h3>Buat Room Baru</h3>
+                <p>Atur room watch party kamu. Video bisa ditambahkan lewat link atau diunggah lewat TCP setelah room dibuat.</p>
+
+                <form id="form-create-room">
+                    <div class="field">
+                        <label for="cr-name">Nama Room</label>
+                        <input id="cr-name" name="room-name" type="text" placeholder="mis. Malam Sabtu — Interstellar" required>
+                    </div>
+
+                    <div class="field">
+                        <label for="cr-video">Link Video <span class="mono" style="text-transform:none; font-weight:400; color:#666;">(opsional)</span></label>
+                        <input id="cr-video" name="video-url" type="url" placeholder="https://...">
+                        <div class="help">Atau lewati langkah ini — kamu bisa unggah file video lewat koneksi TCP setelah masuk ke room.</div>
+                    </div>
+
+                    <div class="field-row-2">
+                        <div class="field">
+                            <label for="cr-max">Maks. Peserta</label>
+                            <select id="cr-max" name="max-participants">
+                                <option value="4">4 Orang</option>
+                                <option value="6">6 Orang</option>
+                                <option value="8" selected>8 Orang</option>
+                                <option value="10">10 Orang</option>
+                                <option value="0">Tanpa Batas</option>
+                            </select>
+                        </div>
+                        <div class="field">
+                            <label for="cr-genre">Kategori</label>
+                            <select id="cr-genre" name="genre">
+                                <option value="film">Film</option>
+                                <option value="series">Series</option>
+                                <option value="anime">Anime</option>
+                                <option value="studi">Studi / Kelompok</option>
+                                <option value="lainnya">Lainnya</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="field">
+                        <label>Privasi Room</label>
+                        <div class="privacy-row">
+                            <label class="radio-card selected">
+                                <input type="radio" name="privacy" value="public" checked>
+                                Publik
+                            </label>
+                            <label class="radio-card">
+                                <input type="radio" name="privacy" value="private">
+                                Privat (butuh kode)
+                            </label>
+                        </div>
+
+                        <div class="field room-code-field" id="cr-code-wrap">
+                            <label for="cr-code">Kode Room</label>
+                            <input id="cr-code" name="room-code" type="text" placeholder="mis. SABTU24" maxlength="10">
+                            <div class="help">Bagikan kode ini ke teman yang kamu undang.</div>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-outline" data-close-modal>Batal</button>
+                        <button type="submit" class="btn btn-primary">Buat Room</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- ===== MODAL: Jelajahi Room Publik ===== -->
+        <div class="modal-overlay" id="modal-browse-rooms">
+            <div class="modal-box modal-box-lg">
+                <button class="modal-x" type="button" data-close-modal aria-label="Tutup">✕</button>
+                <h3>Jelajahi Room Publik</h3>
+                <p>Gabung ke room yang lagi ramai, atau cari berdasarkan judul dan kategori.</p>
+
+                <div class="browse-filter">
+                    <div class="search-wrap">
+                        <input type="text" id="browse-search" placeholder="Cari judul atau host...">
+                    </div>
+                    <select id="browse-genre">
+                        <option value="all">Semua Kategori</option>
+                        <option value="film">Film</option>
+                        <option value="series">Series</option>
+                        <option value="anime">Anime</option>
+                        <option value="studi">Studi / Kelompok</option>
+                    </select>
+                </div>
+
+                <div class="browse-list" id="browse-list">
+                    <!-- Diisi otomatis dari database -->
+                </div>
+
+                <div class="browse-empty" id="browse-empty">Tidak ada room yang cocok dengan pencarianmu.</div>
+
+                <div class="modal-actions">
+                    <button type="button" class="btn btn-outline" data-close-modal>Tutup</button>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <script src="assets/js/dashboard.js"></script>
+</body>
+
+</html>

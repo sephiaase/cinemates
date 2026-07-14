@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Watch Room — Cinemates</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/style.css">
+
+    <!-- BUG FIX (3.1): validasi sesi login terlebih dahulu -->
+    <script src="assets/js/auth-guard.js"></script>
+
+    <script>
+        // SISTEM PROTEKSI WATCH ROOM (ROUTE GUARD)
+        if (!localStorage.getItem('activeRoomId')) {
+            alert('⚠️ Akses ditolak! Kamu harus memilih room atau membuat room baru terlebih dahulu.');
+            window.location.href = 'dashboard.html';
+        }
+    </script>
+    <!-- Memanggil Script Library Resmi YouTube Iframe Player API -->
+    <script src="https://www.youtube.com/iframe_api"></script>
+</head>
+
+<body>
+    <div class="app">
+
+        <div class="topbar">
+            <a href="dashboard.html" class="logo"><span class="dot"></span>CINEMATES</a>
+            <div class="demo-nav">
+                <a href="dashboard.html">Dashboard</a>
+                <a href="room.html" class="active">Watch Room</a>
+            </div>
+        </div>
+
+        <main>
+            <div class="room-shell">
+                <div class="stage">
+                    <div class="stage-header">
+                        <div class="room-name" id="room-title-display">
+                            🎬 <span id="room-title-text">Memuat Judul Room...</span>
+                            <span class="badge badge-live">● Live</span>
+                        </div>
+                    </div>
+
+                    <!-- Area Video YouTube Integrasi -->
+                    <div class="video-area" style="position: relative; overflow: hidden; background: #000;">
+                        <div id="yt-player" style="width: 100%; height: 100%; min-height: 400px; display: none;"></div>
+
+                        <!-- Placeholder jika link YouTube kosong saat room dibuat -->
+                        <div class="video-placeholder" id="custom-placeholder">
+                            <div class="play-btn">▶</div>
+                            <div id="placeholder-text">Host belum memasukkan link video YouTube</div>
+                            <div class="protocol-note mono">Gunakan tab file TCP atau buat room baru dengan tautan video</div>
+                        </div>
+                    </div>
+
+                    <div class="video-controls">
+                        <div class="progress-track" id="progress-track-click">
+                            <div class="progress-fill" id="custom-progress" style="width: 0%;"></div>
+                        </div>
+                        <div class="controls-row">
+                            <div class="left">
+                                <button class="ctl-btn" onclick="controlYT('rewind')">⏮</button>
+                                <button class="ctl-btn" id="btn-play-pause" onclick="controlYT('toggle')">▶</button>
+                                <button class="ctl-btn" onclick="controlYT('forward')">⏭</button>
+                                <span class="time" id="time-display">00:00:00 / 00:00:00</span>
+                            </div>
+                            <div class="right">
+                                <button class="ctl-btn" id="btn-mute" onclick="controlYT('mute')">🔊</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="side-panel">
+                    <div class="side-tabs">
+                        <button class="side-tab active" data-side="participants">Peserta</button>
+                        <button class="side-tab" data-side="files">File (TCP)</button>
+                        <button class="side-tab" data-side="chat">Chat</button>
+                    </div>
+
+                    <div class="side-content">
+
+                        <!-- TAB PESERTA -->
+                        <div class="side-view active" id="side-participants">
+                            <!-- Wadah untuk list peserta yang akan diisi oleh JS -->
+                            <div id="participants-list"></div>
+
+                            <button class="btn btn-outline btn-block btn-sm" style="margin-top:14px;">+ Undang Teman</button>
+
+                            <!-- Tombol ini akan disembunyikan via CSS/JS jika bukan host -->
+                            <button id="btn-end-session" class="btn btn-sm btn-block" onclick="endRoomSession()" style="margin-top: 30px; display: none; background-color: #ff4a4a; color: white; border: 3px solid #000; font-weight: 700; cursor: pointer; box-shadow: 3px 3px 0px #000; text-transform: uppercase;">
+                                Sudahi Sesi Room
+                            </button>
+                        </div>
+
+                        <!-- TAB FILE (TCP) -->
+                        <div class="side-view" id="side-files">
+                            <div class="upload-zone">
+                                <strong>Seret file ke sini</strong>
+                                <p>Subtitle, gambar referensi, atau dokumen (maks 25MB)</p>
+                                <button id="btn-pilih-file" class="btn btn-primary btn-sm" style="margin-top:12px;">Pilih File</button>
+                                <input type="file" id="input-file-tcp" style="display: none;">
+                                <div class="protocol-tag">raw TCP socket · port 5001</div>
+                            </div>
+                            <div id="file-list-container"></div>
+                        </div>
+
+                        <!-- TAB CHAT -->
+                        <div class="side-view" id="side-chat">
+                            <div class="chat-log" id="chat-log"></div>
+
+                            <!-- Kolom Tulis Pesan -->
+                            <form id="chat-input-row" class="chat-input-row">
+                                <input type="text" id="chat-input" placeholder="Tulis pesan...">
+                                <!-- Menggunakan class .btn dan .btn-sm agar konsisten -->
+                                <button type="submit" class="btn btn-sm">Kirim</button>
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+    </div>
+    </main>
+
+    </div>
+
+    <script src="assets/js/room.js"></script>
+</body>
+
+</html>

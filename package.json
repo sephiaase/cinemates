@@ -1,0 +1,22 @@
+{
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.6",
+    "express": "^5.2.1",
+    "mysql2": "^3.22.6",
+    "nodemailer": "^9.0.3",
+    "socket.io": "^4.8.3"
+  },
+  "name": "cinemates",
+  "version": "1.0.0",
+  "description": "Prototipe antarmuka (front-end only) untuk **Cinemates**, platform watch party yang memungkinkan pengguna membuat room virtual untuk menonton video bersama secara sinkron. Dibangun mengikuti brief proyek \"Pembangunan Aplikasi Web Cinemates dengan Sinkronisasi Berbasis Protokol TCP dan UDP\" dan sistem desain **Neo-Brutalist Design System** (thick black strokes, squared corners, solid accent blocks, high contrast).",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}
